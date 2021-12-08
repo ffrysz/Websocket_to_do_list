@@ -17,9 +17,7 @@ app.use((req, res) => {
 });
 
 const io = socket(server, {
-  cors: {
-    origin: ['*']
-  }
+  cors: true
 });
 
 io.on('connection', (socket) => {
