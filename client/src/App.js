@@ -1,5 +1,5 @@
 import React from 'react';
-import io from 'socket.io';
+import io from 'socket.io-client';
 
 class App extends React.Component {
 
@@ -9,9 +9,12 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    this.socket = io(8000);
-    // this.socket.connect("localhost:8000");
+    this.socket = io('localhost:8000');
   }
+
+  // removeTask(taskIndex) {
+  //   this.setState
+  // }
 
   render() {
     return (
@@ -26,12 +29,12 @@ class App extends React.Component {
 
           <ul className="tasks-section__list" id="tasks-list">
             {this.state.tasks.map((element) => {
-              return <li class="task">{element}<button class="btn btn--red">Remove</button></li>
+              return <li className="task">{element}<button className="btn btn--red">Remove</button></li>
             })}
           </ul>
 
           <form id="add-task-form">
-            <input className="text-input" autocomplete="off" type="text" placeholder="Type your description" id="task-name" />
+            <input className="text-input" autoComplete="off" type="text" placeholder="Type your description" id="task-name" />
             <button className="btn" type="submit">Add</button>
           </form>
 
