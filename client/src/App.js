@@ -20,17 +20,20 @@ class App extends React.Component {
     this.socket.on('addTask', (task) => {
       this.addTask(task);
     });
-    this.socket.on('removeTask', (taskIndex) => {
+    this.socket.on('removeTask', (taskId) => {
       const fromServer = true;
-      this.removeTask(taskIndex, fromServer);
+      this.removeTask(taskId, fromServer);
     });
   }
 
-  removeTask(taskIndex, fromServer) {
+  removeTask(taskId, fromServer) {
+    const taskIndex = this.state.tasks.findIndex((el) => {
+      return el.id === taskId;
+    });
     this.state.tasks.splice(taskIndex, 1);
     this.setState({ tasks: this.state.tasks });
     if (!fromServer) {
-      this.socket.emit('removeTask', taskIndex);
+      this.socket.emit('removeTask', taskId);
     }
   }
 
@@ -40,12 +43,16 @@ class App extends React.Component {
 
   submitForm(event) {
     event.preventDefault();
-    this.addTask(this.state.taskName);
-    this.socket.emit('addTask', this.state.taskName);
+    const taskObj = {
+      id: uuidv4(),
+      name: this.state.taskName,
+    }
+    this.addTask(taskObj);
+    this.socket.emit('addTask', taskObj);
   }
 
-  addTask(task) {
-    this.setState({ tasks: [...this.state.tasks, task] });
+  addTask(taskObj) {
+    this.setState({ tasks: [...this.state.tasks, taskObj] });
   }
 
   render() {
@@ -59,8 +66,8 @@ class App extends React.Component {
           <h2>Tasks</h2>
 
           <ul className="tasks-section__list" id="tasks-list">
-            {this.state.tasks.map((element, index) => {
-              return <li key={index} className="task">{element}<button className="btn btn--red" onClick={() => this.removeTask(index)}>Remove</button></li>
+            {this.state.tasks.map((element) => {
+              return <li key={element.id} className="task">{element.name}<button className="btn btn--red" onClick={() => this.removeTask(element.id)}>Remove</button></li>
             })}
           </ul>
 

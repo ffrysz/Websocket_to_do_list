@@ -4,7 +4,15 @@ const path = require('path');
 const socket = require('socket.io');
 
 const app = express();
-const tasks = ['Wynieść śmieci', 'Wyprowadzić psa'];
+const tasks = [{
+  id: '4b6898f3-b872-43bc-91d8-7b4f7690886d',
+  name: 'Wynieść śmieci',
+},
+{
+  id: 'ad7a3c8b-6efe-4c5e-ade2-9bfd363d4ca0',
+  name: 'Wyprowadzić psa',
+}
+];
 
 app.use(cors());
 
@@ -22,12 +30,15 @@ const io = socket(server, {
 
 io.on('connection', (socket) => {
   socket.emit('updateData', tasks);
-  socket.on('addTask', (taskName) => {
-    tasks.push(taskName);
-    socket.broadcast.emit('addTask', taskName);
+  socket.on('addTask', (taskObj) => {
+    tasks.push(taskObj);
+    socket.broadcast.emit('addTask', taskObj);
   });
-  socket.on('removeTask', (taskIndex) => {
+  socket.on('removeTask', (taskId) => {
+    const taskIndex = tasks.findIndex((el) => {
+      return el.id === taskId;
+    });
     tasks.splice(taskIndex, 1);
-    socket.broadcast.emit('removeTask', taskIndex);
+    socket.broadcast.emit('removeTask', taskId);
   });
 });
