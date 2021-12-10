@@ -4,7 +4,7 @@ const path = require('path');
 const socket = require('socket.io');
 
 const app = express();
-const tasks = [];
+const tasks = ['Wynieść śmieci', 'Wyprowadzić psa'];
 
 app.use(cors());
 
